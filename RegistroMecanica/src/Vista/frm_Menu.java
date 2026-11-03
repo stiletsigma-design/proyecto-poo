@@ -228,7 +228,9 @@ public class frm_Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_pan_gananciasMouseExited
 
     private void pan_servicioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pan_servicioMouseClicked
-        
+        frm_servicio servicio = new frm_servicio();
+        servicio.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_pan_servicioMouseClicked
 
     /**
