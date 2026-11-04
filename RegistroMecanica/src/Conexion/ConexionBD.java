@@ -16,7 +16,7 @@ public class ConexionBD {
             con = DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null,
-                    "No se pudo conectar a la base de datos\nPosible error: " + e.getMessage(),
+                    "No se pudo conectar a la base de datos.\nPosible error: " + e.getMessage(),
                     "ERROR", JOptionPane.ERROR_MESSAGE);
         }
         return con;
