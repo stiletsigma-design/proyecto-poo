@@ -4,6 +4,7 @@ import Dao.ServicioDao;
 import Modelo.Servicio;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
+import javax.swing.JOptionPane;
 
 public class frm_servicio extends javax.swing.JFrame {
 
@@ -279,6 +280,9 @@ public class frm_servicio extends javax.swing.JFrame {
         lb_modificar.setText("Modificar");
         lb_modificar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lb_modificar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lb_modificarMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lb_modificarMouseEntered(evt);
             }
@@ -369,6 +373,11 @@ public class frm_servicio extends javax.swing.JFrame {
                 "Código", "Nombre", "Apellido Materno", "Apellido Paterno", "Teléfono", "Pago", "Descripción", "Fecha"
             }
         ));
+        tbl_servicios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_serviciosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbl_servicios);
 
         pan_datosservicio.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 410, 880, 250));
@@ -552,30 +561,112 @@ public class frm_servicio extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_lb_guardarMouseClicked
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+    private void tbl_serviciosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_serviciosMouseClicked
+        int fila = tbl_servicios.getSelectedRow();
+        if (fila == -1) {
+            return;   // clic en zona vacía de la tabla: no hacer nada
         }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new frm_servicio().setVisible(true));
-    }
+        txt_código.setText(valorCelda(fila, 0));
+        txt_nombre.setText(valorCelda(fila, 1));
+        txt_apPaterno.setText(valorCelda(fila, 2));
+        txt_apMaterno.setText(valorCelda(fila, 3));
+        txt_telefono.setText(valorCelda(fila, 4));
+        txt_pago.setText(valorCelda(fila, 5));
+        txt_descripcion.setText(valorCelda(fila, 6));
+        txt_fecha.setText(valorCelda(fila, 7));
+    }//GEN-LAST:event_tbl_serviciosMouseClicked
+
+    private void lb_modificarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_modificarMouseClicked
+
+        // 1) Tiene que haber un servicio seleccionado (el código es un número)
+        int codigo;
+        try {
+            codigo = Integer.parseInt(txt_código.getText().trim());
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Primero selecciona un servicio de la tabla");
+            return;
+        }
+
+        // 2) Leer las cajas
+        String nombre = txt_nombre.getText().trim();
+        String apPaterno = txt_apPaterno.getText().trim();
+        String apMaterno = txt_apMaterno.getText().trim();
+        String telefono = txt_telefono.getText().trim();
+        String pagoTexto = txt_pago.getText().trim().replace(",", ".");
+        String descripcion = txt_descripcion.getText().trim();
+
+        // 3) Validar lo obligatorio
+        if (nombre.isEmpty() || apPaterno.isEmpty() || pagoTexto.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Completa nombre, apellido paterno y pago");
+            return;
+        }
+
+        double pago;
+        try {
+            pago = Double.parseDouble(pagoTexto);
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El pago debe ser un número, por ejemplo 150.50");
+            txt_pago.requestFocus();
+            return;
+        }
+
+        if (pago <= 0) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El pago debe ser mayor a 0");
+            txt_pago.requestFocus();
+            return;
+        }
+
+        // 4) Confirmar antes de cambiar
+        int respuesta = javax.swing.JOptionPane.showConfirmDialog(this,
+                "¿Modificar el servicio " + codigo + "?",
+                "Confirmar", javax.swing.JOptionPane.YES_NO_OPTION);
+        if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        // 5) Armar el servicio (con su código) y modificarlo
+        Servicio s = new Servicio(nombre, apPaterno, apMaterno, telefono, pago, descripcion);
+        s.setCodigo(codigo);
+
+        if (dao.modificar(s)) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Servicio modificado correctamente");
+            listar();                       // refresca la tabla
+            tbl_servicios.clearSelection();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se pudo modificar el servicio");
+        }
+
+    }//GEN-LAST:event_lb_modificarMouseClicked
+
+        /**
+         * @param args the command line arguments
+         */
+        public static void main(String args[]) {
+            /* Set the Nimbus look and feel */
+            //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+            /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+             */
+            try {
+                for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                    if ("Nimbus".equals(info.getName())) {
+                        javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                        break;
+                    }
+                }
+            } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+                logger.log(java.util.logging.Level.SEVERE, null, ex);
+            }
+            //</editor-fold>
+
+            /* Create and display the form */
+            java.awt.EventQueue.invokeLater(() -> new frm_servicio().setVisible(true));
+        }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel10;
@@ -630,5 +721,10 @@ public class frm_servicio extends javax.swing.JFrame {
             };
             modelo.addRow(fila);
         }
+    }
+
+    private String valorCelda(int fila, int columna) {
+        Object valor = tbl_servicios.getValueAt(fila, columna);
+        return valor == null ? "" : valor.toString();
     }
 }

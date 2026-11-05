@@ -1,7 +1,5 @@
 package Dao;
 
-
-
 import Conexion.ConexionBD;
 import Modelo.Servicio;
 import java.sql.Connection;
@@ -13,8 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServicioDao {
-    
-    
 
     ConexionBD conexion = new ConexionBD();
 
@@ -30,7 +26,6 @@ public class ServicioDao {
             ps.setString(1, s.getNombre());
             ps.setString(2, s.getApPaterno());
 
-            // El apellido materno es opcional: si viene vacío se guarda NULL
             if (s.getApMaterno() == null || s.getApMaterno().trim().isEmpty()) {
                 ps.setNull(3, java.sql.Types.VARCHAR);
             } else {
@@ -40,12 +35,13 @@ public class ServicioDao {
             ps.setString(4, s.getTelefono());
             ps.setDouble(5, s.getPago());
             ps.setString(6, s.getDescripcion());
-            
-            // executeUpdate devuelve cuántas filas se insertaron (1 si salió bien
+
             return ps.executeUpdate() > 0;
 
         } catch (Exception e) {
             System.out.println("Error al guardar servicio: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(null,
+                    "Error al guardar: " + e.getMessage());
             return false;
         }
     }
@@ -69,13 +65,12 @@ public class ServicioDao {
                 s.setPago(rs.getDouble("pago"));
                 s.setDescripcion(rs.getString("descripcion"));
 
-                // La fecha viene como Timestamp y se convierte a LocalDateTime
                 Timestamp ts = rs.getTimestamp("fecha");
                 if (ts != null) {
                     s.setFecha(ts.toLocalDateTime());
                 }
 
-                listaservicio.add(s);   // sin esta línea la lista queda vacía
+                listaservicio.add(s);
             }
 
         } catch (Exception e) {
@@ -83,5 +78,39 @@ public class ServicioDao {
         }
 
         return listaservicio;
+    }
+
+    // MODIFICAR
+    public boolean modificar(Servicio s) {
+        // El WHERE codigo = ? es lo que evita modificar TODOS los servicios
+        String sql = "UPDATE servicio SET nombre = ?, apellido_paterno = ?, "
+                   + "apellido_materno = ?, telefono = ?, pago = ?, descripcion = ? "
+                   + "WHERE codigo = ?";
+
+        try (Connection con = conexion.conectar();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, s.getNombre());
+            ps.setString(2, s.getApPaterno());
+
+            if (s.getApMaterno() == null || s.getApMaterno().trim().isEmpty()) {
+                ps.setNull(3, java.sql.Types.VARCHAR);
+            } else {
+                ps.setString(3, s.getApMaterno());
+            }
+
+            ps.setString(4, s.getTelefono());
+            ps.setDouble(5, s.getPago());
+            ps.setString(6, s.getDescripcion());
+            ps.setInt(7, s.getCodigo());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            System.out.println("Error al modificar servicio: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(null,
+                    "Error al modificar: " + e.getMessage());
+            return false;
+        }
     }
 }
