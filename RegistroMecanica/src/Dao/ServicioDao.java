@@ -18,10 +18,9 @@ public class ServicioDao {
     public boolean guardar(Servicio s) {
         // La fecha NO se manda: MySQL pone la fecha y hora actual solo
         String sql = "INSERT INTO servicio(nombre, apellido_paterno, apellido_materno, "
-                   + "telefono, pago, descripcion) VALUES(?,?,?,?,?,?)";
+                + "telefono, pago, descripcion) VALUES(?,?,?,?,?,?)";
 
-        try (Connection con = conexion.conectar();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = conexion.conectar(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, s.getNombre());
             ps.setString(2, s.getApPaterno());
@@ -51,9 +50,7 @@ public class ServicioDao {
         List<Servicio> listaservicio = new ArrayList<>();
         String sql = "SELECT * FROM servicio ORDER BY codigo DESC";
 
-        try (Connection con = conexion.conectar();
-             Statement st = con.createStatement();
-             ResultSet rs = st.executeQuery(sql)) {
+        try (Connection con = conexion.conectar(); Statement st = con.createStatement(); ResultSet rs = st.executeQuery(sql)) {
 
             while (rs.next()) {
                 Servicio s = new Servicio();
@@ -84,11 +81,10 @@ public class ServicioDao {
     public boolean modificar(Servicio s) {
         // El WHERE codigo = ? es lo que evita modificar TODOS los servicios
         String sql = "UPDATE servicio SET nombre = ?, apellido_paterno = ?, "
-                   + "apellido_materno = ?, telefono = ?, pago = ?, descripcion = ? "
-                   + "WHERE codigo = ?";
+                + "apellido_materno = ?, telefono = ?, pago = ?, descripcion = ? "
+                + "WHERE codigo = ?";
 
-        try (Connection con = conexion.conectar();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = conexion.conectar(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, s.getNombre());
             ps.setString(2, s.getApPaterno());
@@ -110,6 +106,23 @@ public class ServicioDao {
             System.out.println("Error al modificar servicio: " + e.getMessage());
             javax.swing.JOptionPane.showMessageDialog(null,
                     "Error al modificar: " + e.getMessage());
+            return false;
+        }
+    }
+    // ELIMINAR
+    public boolean eliminar(int codigo) {
+        // El WHERE codigo = ? es lo que evita borrar TODOS los servicios
+        String sql = "DELETE FROM servicio WHERE codigo = ?";
+
+        try (Connection con = conexion.conectar(); PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, codigo);
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            System.out.println("Error al eliminar servicio: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(null,
+                    "Error al eliminar: " + e.getMessage());
             return false;
         }
     }

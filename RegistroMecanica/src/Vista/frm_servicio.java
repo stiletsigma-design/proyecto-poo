@@ -4,7 +4,6 @@ import Dao.ServicioDao;
 import Modelo.Servicio;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
-import javax.swing.JOptionPane;
 
 public class frm_servicio extends javax.swing.JFrame {
 
@@ -313,6 +312,9 @@ public class frm_servicio extends javax.swing.JFrame {
         lb_limpiar.setText("Limpiar");
         lb_limpiar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lb_limpiar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lb_limpiarMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lb_limpiarMouseEntered(evt);
             }
@@ -343,6 +345,9 @@ public class frm_servicio extends javax.swing.JFrame {
         lb_eliminar.setText("Eliminar");
         lb_eliminar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lb_eliminar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lb_eliminarMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lb_eliminarMouseEntered(evt);
             }
@@ -643,30 +648,65 @@ public class frm_servicio extends javax.swing.JFrame {
 
     }//GEN-LAST:event_lb_modificarMouseClicked
 
-        /**
-         * @param args the command line arguments
-         */
-        public static void main(String args[]) {
-            /* Set the Nimbus look and feel */
-            //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-            /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-             */
-            try {
-                for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                    if ("Nimbus".equals(info.getName())) {
-                        javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                        break;
-                    }
-                }
-            } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-                logger.log(java.util.logging.Level.SEVERE, null, ex);
-            }
-            //</editor-fold>
-
-            /* Create and display the form */
-            java.awt.EventQueue.invokeLater(() -> new frm_servicio().setVisible(true));
+    private void lb_eliminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_eliminarMouseClicked
+        // 1) Tiene que haber un servicio seleccionado
+        int codigo;
+        try {
+            codigo = Integer.parseInt(txt_código.getText().trim());
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Primero selecciona un servicio de la tabla");
+            return;
         }
+
+        // 2) Confirmar: borrar es permanente
+        int respuesta = javax.swing.JOptionPane.showConfirmDialog(this,
+                "¿Seguro que quieres eliminar el servicio " + codigo + "?\nEsta acción no se puede deshacer.",
+                "Confirmar eliminación", javax.swing.JOptionPane.YES_NO_OPTION,
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+        if (respuesta != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        // 3) Eliminar
+        if (dao.eliminar(codigo)) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Servicio eliminado correctamente");
+            limpiarCampos();
+            listar();
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se pudo eliminar el servicio");
+        }
+
+    }//GEN-LAST:event_lb_eliminarMouseClicked
+
+    private void lb_limpiarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_limpiarMouseClicked
+        limpiarCampos();
+    }//GEN-LAST:event_lb_limpiarMouseClicked
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> new frm_servicio().setVisible(true));
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel10;
@@ -726,5 +766,19 @@ public class frm_servicio extends javax.swing.JFrame {
     private String valorCelda(int fila, int columna) {
         Object valor = tbl_servicios.getValueAt(fila, columna);
         return valor == null ? "" : valor.toString();
+    }
+
+    private void limpiarCampos() {
+        txt_código.setText("Codigo automatico");
+        txt_fecha.setText(java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+        txt_nombre.setText("");
+        txt_apPaterno.setText("");
+        txt_apMaterno.setText("");
+        txt_telefono.setText("");
+        txt_pago.setText("");
+        txt_descripcion.setText("");
+        tbl_servicios.clearSelection();
+        txt_nombre.requestFocus();
     }
 }
