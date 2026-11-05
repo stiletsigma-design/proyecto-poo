@@ -1,16 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package Vista;
 
+import Dao.ServicioDao;
+import Modelo.Servicio;
+import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
 
-/**
- *
- * @author USUARIO
- */
 public class frm_servicio extends javax.swing.JFrame {
+
+    ServicioDao dao = new ServicioDao();
 
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(frm_servicio.class.getName());
 
@@ -21,6 +18,16 @@ public class frm_servicio extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setResizable(false);
+        listar();
+        txt_código.setEditable(false);   // lo genera MySQL
+        txt_fecha.setEditable(false);    // lo genera MySQL
+        txt_código.setText("Codigo automatico");
+        txt_fecha.setText(java.time.LocalDateTime.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+        txt_nombre.requestFocus();
+        tbl_servicios.setDefaultEditor(Object.class, null);
+        tbl_servicios.getTableHeader().setReorderingAllowed(false);
+
     }
 
     /**
@@ -238,6 +245,9 @@ public class frm_servicio extends javax.swing.JFrame {
         lb_guardar.setText("Guardar");
         lb_guardar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lb_guardar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lb_guardarMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lb_guardarMouseEntered(evt);
             }
@@ -353,18 +363,15 @@ public class frm_servicio extends javax.swing.JFrame {
         tbl_servicios.setForeground(new java.awt.Color(40, 40, 40));
         tbl_servicios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Código", "Nombre", "Apellido Materno", "Apellido Paterno", "Teléfono", "Pago", "Descripción", "Fecha"
             }
         ));
         jScrollPane1.setViewportView(tbl_servicios);
 
-        pan_datosservicio.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 410, 600, 250));
+        pan_datosservicio.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 410, 880, 250));
 
         pan_casa.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -395,7 +402,7 @@ public class frm_servicio extends javax.swing.JFrame {
             .addComponent(lb_casa, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
         );
 
-        pan_datosservicio.add(pan_casa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 640, 40, 40));
+        pan_datosservicio.add(pan_casa, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 40, 40));
 
         pan_buscar.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -422,7 +429,7 @@ public class frm_servicio extends javax.swing.JFrame {
             .addComponent(lb_buscar, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
         );
 
-        pan_datosservicio.add(pan_buscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 640, 40, 40));
+        pan_datosservicio.add(pan_buscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 60, 40, 40));
 
         lb_fondoservicio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/fondo_mecanicos_900x700_sin_recortar.png"))); // NOI18N
         pan_datosservicio.add(lb_fondoservicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
@@ -437,7 +444,7 @@ public class frm_servicio extends javax.swing.JFrame {
     }//GEN-LAST:event_lb_guardarMouseEntered
 
     private void lb_guardarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_guardarMouseExited
-        pan_guardar.setBackground(new Color(255,102,0));
+        pan_guardar.setBackground(new Color(255, 102, 0));
     }//GEN-LAST:event_lb_guardarMouseExited
 
     private void lb_modificarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_modificarMouseEntered
@@ -445,7 +452,7 @@ public class frm_servicio extends javax.swing.JFrame {
     }//GEN-LAST:event_lb_modificarMouseEntered
 
     private void lb_modificarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_modificarMouseExited
-        pan_modificar.setBackground(new Color(150,150,150));
+        pan_modificar.setBackground(new Color(150, 150, 150));
     }//GEN-LAST:event_lb_modificarMouseExited
 
     private void lb_eliminarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_eliminarMouseEntered
@@ -453,7 +460,7 @@ public class frm_servicio extends javax.swing.JFrame {
     }//GEN-LAST:event_lb_eliminarMouseEntered
 
     private void lb_eliminarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_eliminarMouseExited
-        pan_eliminar.setBackground(new Color(192,57,43));
+        pan_eliminar.setBackground(new Color(192, 57, 43));
     }//GEN-LAST:event_lb_eliminarMouseExited
 
     private void lb_limpiarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_limpiarMouseEntered
@@ -461,7 +468,7 @@ public class frm_servicio extends javax.swing.JFrame {
     }//GEN-LAST:event_lb_limpiarMouseEntered
 
     private void lb_limpiarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_limpiarMouseExited
-        pan_limpiar.setBackground(new Color(150,150,150));
+        pan_limpiar.setBackground(new Color(150, 150, 150));
     }//GEN-LAST:event_lb_limpiarMouseExited
 
     private void lb_casaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_casaMouseEntered
@@ -489,6 +496,61 @@ public class frm_servicio extends javax.swing.JFrame {
         pan_buscar.setBackground(Color.WHITE);
         lb_buscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/icono_buscar_negro.png")));
     }//GEN-LAST:event_lb_buscarMouseExited
+
+    private void lb_guardarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lb_guardarMouseClicked
+        // 1) Leer las cajas
+        String nombre = txt_nombre.getText().trim();
+        String apPaterno = txt_apPaterno.getText().trim();
+        String apMaterno = txt_apMaterno.getText().trim();
+        String telefono = txt_telefono.getText().trim();
+        String pagoTexto = txt_pago.getText().trim().replace(",", ".");
+        String descripcion = txt_descripcion.getText().trim();
+
+        // 2) Validar lo obligatorio
+        if (nombre.isEmpty() || apPaterno.isEmpty() || pagoTexto.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Completa nombre, apellido paterno y pago");
+            return;
+        }
+
+        // 3) Convertir el pago a número
+        double pago;
+        try {
+            pago = Double.parseDouble(pagoTexto);
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El pago debe ser un número, por ejemplo 150.50");
+            txt_pago.requestFocus();
+            return;
+        }
+
+        if (pago <= 0) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "El pago debe ser mayor a 0");
+            txt_pago.requestFocus();
+            return;
+        }
+
+        // 4) Crear el servicio y guardarlo
+        Servicio s = new Servicio(nombre, apPaterno, apMaterno, telefono, pago, descripcion);
+
+        if (dao.guardar(s)) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Servicio guardado correctamente");
+
+            // 5) Limpiar las cajas (código y fecha no se tocan)
+            txt_nombre.setText("");
+            txt_apPaterno.setText("");
+            txt_apMaterno.setText("");
+            txt_telefono.setText("");
+            txt_pago.setText("");
+            txt_descripcion.setText("");
+
+            listar();                  // refresca la tabla con el nuevo servicio
+            txt_nombre.requestFocus(); // el cursor vuelve a Nombre
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se pudo guardar el servicio");
+        }
+    }//GEN-LAST:event_lb_guardarMouseClicked
 
     /**
      * @param args the command line arguments
@@ -551,4 +613,22 @@ public class frm_servicio extends javax.swing.JFrame {
     private javax.swing.JTextField txt_pago;
     private javax.swing.JTextField txt_telefono;
     // End of variables declaration//GEN-END:variables
+
+    private void listar() {
+        DefaultTableModel modelo = (DefaultTableModel) tbl_servicios.getModel();
+        modelo.setRowCount(0);
+        for (Servicio c : dao.listarServicio()) {
+            Object fila[] = {
+                c.getCodigo(),
+                c.getNombre(),
+                c.getApPaterno(),
+                c.getApMaterno(),
+                c.getTelefono(),
+                c.getPago(),
+                c.getDescripcion(),
+                c.getFechaFormateada()
+            };
+            modelo.addRow(fila);
+        }
+    }
 }

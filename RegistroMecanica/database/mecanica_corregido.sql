@@ -74,9 +74,14 @@ CREATE TABLE DetalleCompra (
 
 INSERT INTO Servicio (nombre, apellido_paterno, apellido_materno, telefono, pago, descripcion, fecha)
 VALUES
-('Carlos', 'Ramírez',  'Torres', '987654321', 150.00, 'Cambio de aceite y filtro',  '2026-10-05 09:15:00'),
-('Lucía',  'Gómez',    'Vega',   '912345678', 300.00, 'Cambio de pastillas de freno', '2026-10-12 11:40:00'),
-('Miguel', 'Soto',     NULL,     '955443322',  80.00, 'Alineamiento y balanceo',     '2026-10-20 15:30:00');
+('Carlos', 'Ramírez',  'Torres', '987654321', 150.00, 'Cambio de aceite y filtro',                 '2026-10-05 09:15:00'),
+('Lucía',  'Gómez',    'Vega',   '912345678', 300.00, 'Cambio de pastillas de freno',              '2026-10-12 11:40:00'),
+('Miguel', 'Soto',     NULL,     '955443322',  80.00, 'Alineamiento y balanceo',                   '2026-10-20 15:30:00'),
+('Ana',    'Flores',   'Quispe', '944112233', 450.00, 'Cambio de kit de embrague',                 '2026-10-28 10:00:00'),
+('Jorge',  'Castillo', 'Rojas',  '933221144', 120.00, 'Revisión de motor y diagnóstico',           '2026-11-01 08:45:00'),
+('Rosa',   'Mendoza',  'Huamán', '966778899', 200.00, 'Cambio de bujías y limpieza de inyectores', '2026-11-02 14:20:00'),
+('Pedro',  'Salazar',  'Díaz',   '977665544',  60.00, 'Cambio de batería',                         '2026-11-03 09:10:00'),
+('Elena',  'Vargas',   NULL,     '988990011', 180.00, 'Mantenimiento de suspensión',               '2026-11-03 12:30:00');
 
 INSERT INTO Producto (nombre, categoria, precio_compra, precio_venta, stock)
 VALUES
