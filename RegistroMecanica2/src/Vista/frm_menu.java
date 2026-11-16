@@ -207,7 +207,9 @@ public class frm_menu extends javax.swing.JFrame {
     }//GEN-LAST:event_pan_serviciosMouseExited
 
     private void pan_ventaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pan_ventaMouseClicked
-        // TODO add your handling code here:
+        frm_venta venta = new frm_venta();
+        venta.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_pan_ventaMouseClicked
 
     private void pan_ventaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pan_ventaMouseEntered

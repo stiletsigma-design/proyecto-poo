@@ -36,6 +36,7 @@ public class frm_venta extends javax.swing.JFrame {
         });
         txtFecha.setText(LocalDateTime.now().format(formatoFecha));
         txtMonto.setText("0.00");
+        this.setLocationRelativeTo(null);
     }
     
     // Método para configurar la tabla
